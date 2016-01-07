@@ -15,7 +15,8 @@ module Sidekiq
         conn.zremrangebyscore(Sidekiq::Failures::LIST_KEY, score, score)
         results.map do |message|
           msg = Sidekiq.load_json(message)
-          (msg["retry_count"] ||= 0) += 1
+          msg["retry_count"] ||= 0
+          msg["retry_count"] += 1
           Sidekiq::Client.push(msg)
         end
       end
